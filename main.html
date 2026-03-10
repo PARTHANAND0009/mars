@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARS COLONY — PARTH ANAND</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mars-red: #c1440e;
+    --mars-orange: #e8722a;
+    --mars-dust: #b5652a;
+    --glow-red: #ff4500;
+    --glow-orange: #ff8c00;
+    --deep-space: #04050d;
+    --space-navy: #080d1a;
+    --panel-bg: rgba(10, 14, 28, 0.92);
+    --panel-border: rgba(193, 68, 14, 0.4);
+    --text-primary: #f0d8c0;
+    --text-dim: #7a6a5a;
+    --green: #39ff88;
+    --green-dim: #1a7a40;
+    --yellow: #ffd700;
+    --danger: #ff3333;
+    --blue: #4fc3f7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep-space);
+    color: var(--text-primary);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── STARFIELD ── */
+  #starfield {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  }
+
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(to top,
+      rgba(100,30,5,0.6) 0%,
+      rgba(60,15,2,0.3) 60%,
+      transparent 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  #screen-intro {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .intro-logo {
+    margin-bottom: 12px;
+    animation: logoReveal 1.2s ease forwards;
+  }
+
+  @keyframes logoReveal {
+    from { opacity: 0; transform: scale(0.8) translateY(-20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .intro-logo .label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 8px;
+    color: var(--mars-orange);
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 8px;
+  }
+
+  .intro-logo h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(42px, 9vw, 90px);
+    font-weight: 900;
+    line-height: 0.9;
+    background: linear-gradient(135deg, #ff6030 0%, #ff9050 40%, #ffcc80 70%, #ff6030 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 30px rgba(255,80,20,0.6));
+  }
+
+  .intro-logo .subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(12px, 2.5vw, 18px);
+    letter-spacing: 12px;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  .mars-planet {
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%,
+      #e86030 0%, #c04010 30%, #8a2800 60%, #3a0d00 100%
+    );
+    box-shadow:
+      0 0 60px rgba(200,80,20,0.5),
+      0 0 120px rgba(200,60,10,0.2),
+      inset -20px -15px 40px rgba(0,0,0,0.6);
+    margin: 30px auto;
+    position: relative;
+    animation: marsFloat 6s ease-in-out infinite;
+  }
+
+  .mars-planet::before {
+    content: '';
+    position: absolute;
+    top: 22%; left: 15%;
+    width: 55%; height: 18%;
+    background: rgba(150,50,10,0.5);
+    border-radius: 50%;
+    transform: rotate(-10deg);
+    filter: blur(4px);
+  }
+
+  .mars-planet::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 30%;
+    width: 35%; height: 12%;
+    background: rgba(120,40,8,0.6);
+    border-radius: 50%;
+    transform: rotate(5deg);
+    filter: blur(3px);
+  }
+
+  @keyframes marsFloat {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+  }
+
+  .intro-desc {
+    max-width: 560px;
+    font-size: 15px;
+    color: #a09080;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  .mission-brief {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 20px 28px;
+    max-width: 560px;
+    width: 100%;
+    margin: 16px 0 28px;
+    text-align: left;
+  }
+
+  .mission-brief h3 {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--mars-orange);
+    font-size: 11px;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+  }
+
+  .mission-brief ul {
+    list-style: none;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+
+  .mission-brief li {
+    font-size: 13px; color: #c0a890;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .mission-brief li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    color: var(--mars-orange);
+  }
+
+  .btn-launch {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--mars-red), var(--mars-orange));
+    color: #fff;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    box-shadow: 0 0 30px rgba(255,80,20,0.4);
+  }
+
+  .btn-launch::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn-launch:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(255,80,20,0.7); }
+  .btn-launch:hover::before { opacity: 1; }
+  .btn-launch:active { transform: translateY(0); }
+
+  .version-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 20px;
+    letter-spacing: 3px;
+  }
+
+  #screen-game {
+    padding: 0;
+    flex-direction: column;
+  }
+
+
+  #top-hud {
+    background: rgba(5, 8, 18, 0.95);
+    border-bottom: 1px solid var(--panel-border);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .hud-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--mars-orange);
+    letter-spacing: 3px;
+    white-space: nowrap;
+  }
+
+  .hud-resources {
+    display: flex; gap: 16px; flex-wrap: wrap; flex: 1;
+  }
+
+  .res-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .res-chip .icon { font-size: 15px; }
+  .res-chip .val { color: var(--green); font-weight: 700; min-width: 40px; }
+  .res-chip .label-small { color: var(--text-dim); font-size: 11px; }
+
+  .hud-day {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--blue);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+
+  #game-body {
+    display: grid;
+    grid-template-columns: 280px 1fr 300px;
+    gap: 0;
+    flex: 1;
+    min-height: calc(100vh - 60px);
+  }
+
+
+  #panel-build {
+    background: rgba(6, 9, 20, 0.95);
+    border-right: 1px solid var(--panel-border);
+    padding: 16px 12px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .panel-section-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    padding: 6px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 4px;
+  }
+
+  .build-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .build-card:hover {
+    border-color: var(--mars-orange);
+    background: rgba(193,68,14,0.12);
+    transform: translateX(3px);
+  }
+
+  .build-card.affordable { border-color: rgba(57,255,136,0.25); }
+  .build-card.unaffordable { opacity: 0.5; cursor: not-allowed; }
+
+  .build-card .bc-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  }
+
+  .build-card .bc-icon { font-size: 20px; }
+  .build-card .bc-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+  }
+
+  .build-card .bc-count {
+    margin-left: auto;
+    background: var(--mars-red);
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 10px;
+  }
+
+  .build-card .bc-desc {
+    font-size: 11px; color: #7a6a5a; line-height: 1.4; margin-bottom: 6px;
+  }
+
+  .build-card .bc-cost {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+
+  .cost-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    color: #c0a890;
+  }
+
+  #panel-colony {
+    background: radial-gradient(ellipse at 50% 100%,
+      rgba(120,40,10,0.2) 0%,
+      rgba(10,14,28,0.9) 60%,
+      var(--space-navy) 100%
+    );
+    padding: 20px;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  #colony-name-area {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  #colony-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--mars-orange);
+    letter-spacing: 3px;
+    background: none; border: none;
+    text-align: center;
+    cursor: text;
+    transition: color 0.2s;
+    outline: none;
+  }
+
+  #colony-name:focus { color: #fff; border-bottom: 1px solid var(--mars-orange); }
+
+  .status-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+  }
+
+  .status-badge.ok { background: rgba(57,255,136,0.15); color: var(--green); border: 1px solid var(--green-dim); }
+  .status-badge.warn { background: rgba(255,215,0,0.12); color: var(--yellow); border: 1px solid rgba(255,215,0,0.4); }
+  .status-badge.danger { background: rgba(255,50,50,0.12); color: var(--danger); border: 1px solid rgba(255,50,50,0.4); }
+
+
+  #colony-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+    margin: 0 auto 24px;
+    max-width: 600px;
+  }
+
+  .grid-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: rgba(80,30,10,0.3);
+    border: 1px solid rgba(120,50,15,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .grid-cell:hover { border-color: var(--mars-orange); background: rgba(193,68,14,0.2); transform: scale(1.08); z-index: 2; }
+  .grid-cell.empty-cell { background: rgba(60,20,5,0.25); }
+  .grid-cell.placed { background: rgba(15,20,40,0.6); border-color: rgba(193,68,14,0.5); }
+  .grid-cell.placed:hover { border-color: var(--glow-red); }
+
+  .cell-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,100,20,0.2), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .grid-cell.placed .cell-glow { opacity: 1; }
+
+
+  .vitals-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
+  }
+
+  .vital-bar-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+
+  .vital-bar-card .vb-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .vital-bar-card .vb-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+  }
+
+  .vital-bar-card .vb-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .vital-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .vital-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* Events Log */
+  #event-log {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 14px;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  #event-log h4 {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .event-item {
+    font-size: 12px;
+    color: #9a8a7a;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; gap: 8px; align-items: flex-start;
+    animation: eventFade 0.4s ease;
+  }
+
+  @keyframes eventFade {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .event-item .ev-day {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--mars-dust);
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  .event-item.good { color: var(--green); }
+  .event-item.bad  { color: var(--danger); }
+  .event-item.warn { color: var(--yellow); }
+  .event-item.info { color: var(--blue); }
+
+
+  #panel-stats {
+    background: rgba(6, 9, 20, 0.95);
+    border-left: 1px solid var(--panel-border);
+    padding: 16px 14px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  .stat-block {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .stat-block h4 {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 4px;
+    color: var(--text-dim); margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .stat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+  }
+
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row .sr-label { color: #7a6a5a; }
+  .stat-row .sr-val { font-family: 'Share Tech Mono', monospace; color: var(--text-primary); }
+  .stat-row .sr-val.pos { color: var(--green); }
+  .stat-row .sr-val.neg { color: var(--danger); }
+  .stat-row .sr-val.warn { color: var(--yellow); }
+
+
+  .speed-controls {
+    display: flex; gap: 6px; align-items: center;
+  }
+
+  .btn-speed {
+    flex: 1;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    padding: 8px 4px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-dim);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .btn-speed:hover { border-color: var(--mars-orange); color: var(--mars-orange); }
+  .btn-speed.active { background: rgba(193,68,14,0.3); border-color: var(--mars-orange); color: var(--mars-orange); }
+  .btn-speed.paused { background: rgba(255,50,50,0.15); border-color: var(--danger); color: var(--danger); }
+
+
+  .btn-nextsol {
+    width: 100%;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(193,68,14,0.5), rgba(232,114,42,0.4));
+    border: 1px solid var(--mars-orange);
+    color: var(--mars-orange);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+
+  .btn-nextsol:hover {
+    background: linear-gradient(135deg, var(--mars-red), var(--mars-orange));
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255,80,20,0.4);
+  }
+
+
+  .research-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  .research-item:hover { border-color: var(--blue); background: rgba(79,195,247,0.07); }
+  .research-item.researched { border-color: var(--green-dim); background: rgba(57,255,136,0.05); opacity: 0.7; cursor: default; }
+  .research-item .ri-icon { font-size: 18px; }
+  .research-item .ri-info { flex: 1; }
+  .research-item .ri-name { font-size: 12px; color: var(--text-primary); margin-bottom: 2px; }
+  .research-item .ri-cost { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); }
+  .research-item .ri-check { color: var(--green); font-size: 14px; }
+
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--space-navy);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 28px;
+    max-width: 420px;
+    width: 90%;
+    position: relative;
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-box h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    color: var(--mars-orange);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .modal-box p { font-size: 14px; color: #9a8a7a; line-height: 1.6; margin-bottom: 16px; }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  .btn-modal-ok {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    padding: 9px 22px;
+    background: linear-gradient(135deg, var(--mars-red), var(--mars-orange));
+    color: #fff; border: none; border-radius: 5px; cursor: pointer;
+    letter-spacing: 2px; transition: all 0.2s;
+  }
+
+  .btn-modal-ok:hover { box-shadow: 0 0 20px rgba(255,80,20,0.5); }
+
+  .btn-modal-cancel {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    padding: 9px 22px;
+    background: transparent;
+    color: var(--text-dim); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 5px; cursor: pointer;
+    letter-spacing: 2px; transition: all 0.2s;
+  }
+
+  .btn-modal-cancel:hover { border-color: var(--text-dim); color: var(--text-primary); }
+
+  #screen-gameover, #screen-win {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .end-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+
+  #screen-gameover .end-title { color: var(--danger); filter: drop-shadow(0 0 20px rgba(255,50,50,0.6)); }
+  #screen-win .end-title { color: var(--green); filter: drop-shadow(0 0 20px rgba(57,255,136,0.6)); }
+
+  .end-stats {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 20px 30px;
+    max-width: 400px;
+    width: 100%;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .end-stats h3 {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 4px; color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+  ::-webkit-scrollbar-thumb { background: rgba(193,68,14,0.4); border-radius: 2px; }
+
+  #toast-container {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 300;
+    display: flex; flex-direction: column; gap: 8px;
+    pointer-events: none;
+  }
+
+  .toast {
+    background: rgba(10,14,28,0.95);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+    animation: toastIn 0.3s ease;
+    max-width: 280px;
+    backdrop-filter: blur(10px);
+  }
+
+  .toast.good { border: 1px solid var(--green-dim); color: var(--green); }
+  .toast.bad  { border: 1px solid rgba(255,50,50,0.5); color: var(--danger); }
+  .toast.warn { border: 1px solid rgba(255,215,0,0.4); color: var(--yellow); }
+  .toast.info { border: 1px solid rgba(79,195,247,0.4); color: var(--blue); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    #game-body {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto;
+    }
+    #panel-build { max-height: 200px; overflow-x: auto; flex-direction: row; flex-wrap: nowrap; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 10px; }
+    #panel-stats { border-left: none; border-top: 1px solid var(--panel-border); }
+    #colony-grid { grid-template-columns: repeat(8, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+<div id="toast-container"></div>
+
+
+<section id="screen-intro" class="screen active">
+  <div class="intro-logo">
+    <div class="label">HACKCLUB · SPACE MISSION 2026</div>
+    <h1>MARS<br>COLONY</h1>
+    <div class="subtitle">PRIME DIRECTIVE</div>
+  </div>
+  <div class="mars-planet"></div>
+  <p class="intro-desc">
+    Year 2074. Earth's resources are depleted. Humanity's last hope lies 225 million km away.
+    You are Colony Commander. Build. Survive. Thrive.
+  </p>
+  <div class="mission-brief">
+    <h3>📋 Mission Brief</h3>
+    <ul>
+      <li>Manage oxygen & food</li>
+      <li>Mine iron & crystal</li>
+      <li>Grow your population</li>
+      <li>Research technologies</li>
+      <li>Survive dust storms</li>
+      <li>Reach 100 colonists</li>
+    </ul>
+  </div>
+  <button class="btn-launch" onclick="startGame()">LAUNCH MISSION</button>
+  <div class="version-tag">v2.0 · PARTH ANAND · HACKCLUB 2026</div>
+</section>
+
+
+<section id="screen-game" class="screen">
+
+  <!-- TOP HUD -->
+  <div id="top-hud">
+    <div class="hud-title">MARS COLONY</div>
+    <div class="hud-resources">
+      <div class="res-chip"><span class="icon">👥</span><span class="label-small">POP</span><span class="val" id="hud-pop">4</span></div>
+      <div class="res-chip"><span class="icon">💨</span><span class="label-small">O₂</span><span class="val" id="hud-o2">100</span></div>
+      <div class="res-chip"><span class="icon">🍎</span><span class="label-small">FOOD</span><span class="val" id="hud-food">80</span></div>
+      <div class="res-chip"><span class="icon">⚡</span><span class="label-small">POWER</span><span class="val" id="hud-power">20</span></div>
+      <div class="res-chip"><span class="icon">🔩</span><span class="label-small">IRON</span><span class="val" id="hud-iron">50</span></div>
+      <div class="res-chip"><span class="icon">💎</span><span class="label-small">CRYSTAL</span><span class="val" id="hud-crystal">10</span></div>
+      <div class="res-chip"><span class="icon">🔬</span><span class="label-small">SCIENCE</span><span class="val" id="hud-science">0</span></div>
+    </div>
+    <div class="hud-day">SOL <span id="hud-day">1</span></div>
+  </div>
+
+  <div id="game-body">
+
+
+    <div id="panel-build">
+      <div class="panel-section-title">⚒ Construct</div>
+
+
+      <div id="build-cards-container"></div>
+
+    </div>
+
+
+    <div id="panel-colony">
+      <div id="colony-name-area">
+        <input id="colony-name" value="NOVA ARES" maxlength="18" title="Click to rename">
+        <span id="colony-status" class="status-badge ok">STABLE</span>
+      </div>
+
+      <div id="colony-grid"></div>
+
+
+      <div class="vitals-grid">
+        <div class="vital-bar-card">
+          <div class="vb-header">
+            <span class="vb-name">OXYGEN</span>
+            <span class="vb-val" id="vb-o2-val" style="color:#4fc3f7">100%</span>
+          </div>
+          <div class="vital-bar-track">
+            <div class="vital-bar-fill" id="vb-o2-bar" style="width:100%;background:linear-gradient(90deg,#1a5a8a,#4fc3f7)"></div>
+          </div>
+        </div>
+        <div class="vital-bar-card">
+          <div class="vb-header">
+            <span class="vb-name">FOOD SUPPLY</span>
+            <span class="vb-val" id="vb-food-val" style="color:#39ff88">100%</span>
+          </div>
+          <div class="vital-bar-track">
+            <div class="vital-bar-fill" id="vb-food-bar" style="width:100%;background:linear-gradient(90deg,#1a5a30,#39ff88)"></div>
+          </div>
+        </div>
+        <div class="vital-bar-card">
+          <div class="vb-header">
+            <span class="vb-name">MORALE</span>
+            <span class="vb-val" id="vb-morale-val" style="color:#ffd700">75%</span>
+          </div>
+          <div class="vital-bar-track">
+            <div class="vital-bar-fill" id="vb-morale-bar" style="width:75%;background:linear-gradient(90deg,#7a5500,#ffd700)"></div>
+          </div>
+        </div>
+        <div class="vital-bar-card">
+          <div class="vb-header">
+            <span class="vb-name">HEALTH</span>
+            <span class="vb-val" id="vb-health-val" style="color:#ff6b6b">100%</span>
+          </div>
+          <div class="vital-bar-track">
+            <div class="vital-bar-fill" id="vb-health-bar" style="width:100%;background:linear-gradient(90deg,#5a1a1a,#ff6b6b)"></div>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="event-log">
+        <h4>📡 Mission Log</h4>
+        <div id="event-list"></div>
+      </div>
+    </div>
+
+
+    <div id="panel-stats">
+
+
+      <div class="stat-block">
+        <h4>⏱ Simulation Speed</h4>
+        <div class="speed-controls">
+          <button class="btn-speed paused active" id="btn-pause" onclick="setSpeed(0)">⏸ PAUSE</button>
+          <button class="btn-speed" id="btn-1x" onclick="setSpeed(1)">1×</button>
+          <button class="btn-speed" id="btn-2x" onclick="setSpeed(2)">2×</button>
+          <button class="btn-speed" id="btn-3x" onclick="setSpeed(3)">3×</button>
+        </div>
+        <div style="margin-top:10px">
+          <button class="btn-nextsol" onclick="advanceSol()">▶ NEXT SOL</button>
+        </div>
+      </div>
+
+
+      <div class="stat-block">
+        <h4>📊 Colony Stats</h4>
+        <div class="stat-row"><span class="sr-label">Colonists</span><span class="sr-val" id="stat-pop">4</span></div>
+        <div class="stat-row"><span class="sr-label">Buildings</span><span class="sr-val" id="stat-buildings">1</span></div>
+        <div class="stat-row"><span class="sr-label">Sol Day</span><span class="sr-val" id="stat-sol">1</span></div>
+        <div class="stat-row"><span class="sr-label">O₂/sol</span><span class="sr-val pos" id="stat-o2rate">+5</span></div>
+        <div class="stat-row"><span class="sr-label">Food/sol</span><span class="sr-val pos" id="stat-foodrate">+2</span></div>
+        <div class="stat-row"><span class="sr-label">Power</span><span class="sr-val" id="stat-power">20/20</span></div>
+        <div class="stat-row"><span class="sr-label">Score</span><span class="sr-val warn" id="stat-score">0</span></div>
+      </div>
+
+      <div class="stat-block">
+        <h4>🔬 Research Tree</h4>
+        <div id="research-list"></div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="stat-block">
+        <h4>🏆 Milestones</h4>
+        <div id="achievement-list">
+          <div class="stat-row"><span class="sr-label">Pop 10</span><span class="sr-val" id="ach-pop10">⬜</span></div>
+          <div class="stat-row"><span class="sr-label">Pop 25</span><span class="sr-val" id="ach-pop25">⬜</span></div>
+          <div class="stat-row"><span class="sr-label">Pop 50</span><span class="sr-val" id="ach-pop50">⬜</span></div>
+          <div class="stat-row"><span class="sr-label">Pop 100</span><span class="sr-val" id="ach-pop100">⬜</span></div>
+          <div class="stat-row"><span class="sr-label">Sol 50</span><span class="sr-val" id="ach-sol50">⬜</span></div>
+          <div class="stat-row"><span class="sr-label">Sol 100</span><span class="sr-val" id="ach-sol100">⬜</span></div>
+          <div class="stat-row"><span class="sr-label">10 Buildings</span><span class="sr-val" id="ach-build10">⬜</span></div>
+          <div class="stat-row"><span class="sr-label">Survive Storm</span><span class="sr-val" id="ach-storm">⬜</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section id="screen-gameover" class="screen">
+  <div class="end-title">COLONY LOST</div>
+  <p style="color:#7a6a5a;font-size:15px;margin-bottom:16px" id="gameover-reason">Your colony has perished on the red planet.</p>
+  <div class="end-stats">
+    <h3>📊 Final Stats</h3>
+    <div class="stat-row"><span class="sr-label">Sols Survived</span><span class="sr-val" id="go-sols">-</span></div>
+    <div class="stat-row"><span class="sr-label">Peak Population</span><span class="sr-val" id="go-pop">-</span></div>
+    <div class="stat-row"><span class="sr-label">Buildings Constructed</span><span class="sr-val" id="go-buildings">-</span></div>
+    <div class="stat-row"><span class="sr-label">Score</span><span class="sr-val warn" id="go-score">-</span></div>
+  </div>
+  <button class="btn-launch" onclick="resetGame()" style="margin-top:10px">↩ TRY AGAIN</button>
+</section>
+
+
+<section id="screen-win" class="screen">
+  <div class="end-title">MISSION<br>COMPLETE</div>
+  <p style="color:#39ff88;font-size:15px;margin-bottom:16px">Humanity flourishes on Mars. You did it, Commander.</p>
+  <div class="end-stats">
+    <h3>📊 Victory Stats</h3>
+    <div class="stat-row"><span class="sr-label">Sols Taken</span><span class="sr-val pos" id="win-sols">-</span></div>
+    <div class="stat-row"><span class="sr-label">Final Population</span><span class="sr-val pos" id="win-pop">-</span></div>
+    <div class="stat-row"><span class="sr-label">Score</span><span class="sr-val warn" id="win-score">-</span></div>
+  </div>
+  <button class="btn-launch" onclick="resetGame()" style="margin-top:10px;background:linear-gradient(135deg,#1a7a40,#39ff88)">🚀 NEW GAME</button>
+</section>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <h2 id="modal-title">Event</h2>
+    <p id="modal-body">Something happened.</p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" id="modal-cancel" onclick="closeModal()">DISMISS</button>
+      <button class="btn-modal-ok" id="modal-ok" onclick="closeModal()">CONFIRM</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+(function(){
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars(){
+    stars = [];
+    for(let i=0;i<220;i++){
+      stars.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*1.5+0.3,
+        a: Math.random(),
+        speed: Math.random()*0.003+0.001
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    stars.forEach(s=>{
+      s.a += s.speed;
+      const alpha = 0.3 + Math.abs(Math.sin(s.a)) * 0.7;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,220,180,${alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initStars();
+  draw();
+  window.addEventListener('resize', ()=>{ resize(); initStars(); });
+})();
+
+
+const BUILDINGS = [
+  {
+    id:'hab', name:'HABITAT', icon:'🏠', desc:'Houses 4 colonists. Needed for population growth.',
+    cost:{iron:30, crystal:0}, produces:{}, consumes:{power:2, oxygen:-2},
+    housingCapacity:4, powerNeeded:2, isBase:true
+  },
+  {
+    id:'oxygen_gen', name:'O₂ GENERATOR', icon:'💨', desc:'Produces oxygen by electrolysis of regolith ice.',
+    cost:{iron:20, crystal:5}, produces:{oxygen:8}, consumes:{power:3},
+    powerNeeded:3
+  },
+  {
+    id:'greenhouse', name:'GREENHOUSE', icon:'🌿', desc:'Grows food in controlled Martian conditions.',
+    cost:{iron:25, crystal:8}, produces:{food:6}, consumes:{power:2},
+    powerNeeded:2
+  },
+  {
+    id:'solar', name:'SOLAR ARRAY', icon:'☀️', desc:'Generates 12 power from Martian sunlight.',
+    cost:{iron:15, crystal:10}, produces:{power:12}, consumes:{},
+    powerNeeded:0
+  },
+  {
+    id:'mine', name:'IRON MINE', icon:'⛏️', desc:'Extracts iron ore from the Martian crust.',
+    cost:{iron:40, crystal:0}, produces:{iron:12}, consumes:{power:4},
+    powerNeeded:4
+  },
+  {
+    id:'crystal_lab', name:'CRYSTAL DRILL', icon:'💎', desc:'Mines rare crystals deep underground.',
+    cost:{iron:50, crystal:0}, produces:{crystal:4}, consumes:{power:5},
+    powerNeeded:5
+  },
+  {
+    id:'research', name:'RESEARCH LAB', icon:'🔬', desc:'Produces science points each sol.',
+    cost:{iron:60, crystal:20}, produces:{science:3}, consumes:{power:4},
+    powerNeeded:4
+  },
+  {
+    id:'med_bay', name:'MED BAY', icon:'⚕️', desc:'Improves colonist health and survival.',
+    cost:{iron:45, crystal:15}, produces:{health:10}, consumes:{power:3},
+    powerNeeded:3
+  },
+  {
+    id:'reactor', name:'NUCLEAR REACTOR', icon:'⚛️', desc:'Generates 30 power. Requires research.',
+    cost:{iron:100, crystal:40}, produces:{power:30}, consumes:{},
+    powerNeeded:0, requiresResearch:'nuclear'
+  },
+  {
+    id:'dome', name:'GREAT DOME', icon:'🔵', desc:'Houses 12 colonists + boosts morale.',
+    cost:{iron:80, crystal:30}, produces:{morale:15}, consumes:{power:5},
+    housingCapacity:12, powerNeeded:5, requiresResearch:'dome_tech'
+  },
+  {
+    id:'water', name:'WATER EXTRACTOR', icon:'💧', desc:'Melts ice for drinking water & O₂ bonus.',
+    cost:{iron:35, crystal:5}, produces:{oxygen:4, food:2}, consumes:{power:3},
+    powerNeeded:3
+  },
+  {
+    id:'comms', name:'COMMS ARRAY', icon:'📡', desc:'Boosts morale & generates bonus science.',
+    cost:{iron:30, crystal:12}, produces:{science:1, morale:5}, consumes:{power:2},
+    powerNeeded:2
+  },
+];
+
+const RESEARCH_TREE = [
+  {id:'insulation', name:'Thermal Insulation', icon:'🧊', desc:'Reduces storm damage by 50%.', cost:20},
+  {id:'hydroponics', name:'Hydroponics', icon:'🌱', desc:'Greenhouses produce +50% food.', cost:30},
+  {id:'nuclear', name:'Nuclear Fusion', icon:'⚛️', desc:'Unlocks Reactor building.', cost:50},
+  {id:'dome_tech', name:'Dome Engineering', icon:'🔵', desc:'Unlocks the Great Dome.', cost:60},
+  {id:'medicine', name:'Advanced Medicine', icon:'💊', desc:'Med Bay heals +100% more.', cost:25},
+  {id:'efficiency', name:'Power Efficiency', icon:'⚡', desc:'All buildings use 20% less power.', cost:40},
+];
+
+let G = {};
+
+function initState(){
+  G = {
+    sol: 1,
+    resources: { pop:4, oxygen:100, food:80, power:20, iron:50, crystal:10, science:0 },
+    morale: 75,
+    health: 100,
+    housingCap: 4,
+    peakPop: 4,
+    score: 0,
+    buildings: [], // {id, cellIdx}
+    grid: Array(100).fill(null), // cell building ids
+    speed: 0, // 0=paused
+    timer: null,
+    researched: [],
+    achievements: {},
+    survidedStorm: false,
+    placingBuilding: null,
+    totalBuildings: 0,
+  };
+  // Place starting habitat
+  G.grid[44] = 'hab';
+  G.buildings.push({id:'hab', cellIdx:44});
+  G.totalBuildings = 1;
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+function startGame(){
+  initState();
+  buildUI();
+  renderAll();
+  showScreen('game');
+  logEvent('Mission started. Good luck, Commander.','info');
+}
+
+function resetGame(){
+  clearTimeout(G.timer);
+  showScreen('intro');
+}
+
+function buildUI(){
+  // Build cards
+  const cont = document.getElementById('build-cards-container');
+  cont.innerHTML = '';
+  BUILDINGS.forEach(b=>{
+    const div = document.createElement('div');
+    div.className = 'build-card';
+    div.id = 'bc-'+b.id;
+    div.onclick = ()=>selectBuilding(b.id);
+    div.innerHTML = `
+      <div class="bc-header">
+        <span class="bc-icon">${b.icon}</span>
+        <span class="bc-name">${b.name}</span>
+        <span class="bc-count" id="bc-count-${b.id}">0</span>
+      </div>
+      <div class="bc-desc">${b.desc}</div>
+      <div class="bc-cost">
+        ${b.cost.iron ? `<span class="cost-tag">🔩 ${b.cost.iron}</span>`:''}
+        ${b.cost.crystal ? `<span class="cost-tag">💎 ${b.cost.crystal}</span>`:''}
+      </div>
+    `;
+    cont.appendChild(div);
+  });
+
+  // Grid
+  const grid = document.getElementById('colony-grid');
+  grid.innerHTML = '';
+  for(let i=0;i<100;i++){
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell empty-cell';
+    cell.id = 'cell-'+i;
+    cell.onclick = ()=>placeBuilding(i);
+    cell.title = 'Empty lot';
+    cell.innerHTML = '<div class="cell-glow"></div>';
+    grid.appendChild(cell);
+  }
+
+  // Research
+  const rl = document.getElementById('research-list');
+  rl.innerHTML = '';
+  RESEARCH_TREE.forEach(r=>{
+    const div = document.createElement('div');
+    div.className = 'research-item';
+    div.id = 'res-'+r.id;
+    div.onclick = ()=>doResearch(r.id);
+    div.innerHTML = `
+      <span class="ri-icon">${r.icon}</span>
+      <div class="ri-info">
+        <div class="ri-name">${r.name}</div>
+        <div class="ri-cost">🔬 ${r.cost} science</div>
+      </div>
+      <span class="ri-check" id="ri-check-${r.id}"></span>
+    `;
+    rl.appendChild(div);
+  });
+
+  renderGrid();
+}
+
+
+function renderAll(){
+  renderHUD();
+  renderBuildCards();
+  renderGrid();
+  renderVitals();
+  renderStats();
+  renderAchievements();
+}
+
+function renderHUD(){
+  const r = G.resources;
+  document.getElementById('hud-pop').textContent = r.pop;
+  document.getElementById('hud-o2').textContent = Math.floor(r.oxygen);
+  document.getElementById('hud-food').textContent = Math.floor(r.food);
+  document.getElementById('hud-power').textContent = r.power;
+  document.getElementById('hud-iron').textContent = Math.floor(r.iron);
+  document.getElementById('hud-crystal').textContent = Math.floor(r.crystal);
+  document.getElementById('hud-science').textContent = Math.floor(r.science);
+  document.getElementById('hud-day').textContent = G.sol;
+}
+
+function renderBuildCards(){
+  BUILDINGS.forEach(b=>{
+    const card = document.getElementById('bc-'+b.id);
+    if(!card) return;
+
+    // Check research req
+    if(b.requiresResearch && !G.researched.includes(b.requiresResearch)){
+      card.className = 'build-card unaffordable';
+      card.title = `Requires research: ${b.requiresResearch}`;
+    } else {
+      const canAfford = G.resources.iron >= b.cost.iron && G.resources.crystal >= (b.cost.crystal||0);
+      card.className = 'build-card ' + (canAfford ? 'affordable':'unaffordable');
+    }
+
+    const count = G.buildings.filter(x=>x.id===b.id).length;
+    document.getElementById('bc-count-'+b.id).textContent = count;
+
+    // Highlight selected
+    if(G.placingBuilding === b.id){
+      card.style.outline = '2px solid var(--mars-orange)';
+    } else {
+      card.style.outline = '';
+    }
+  });
+}
+
+function renderGrid(){
+  for(let i=0;i<100;i++){
+    const cell = document.getElementById('cell-'+i);
+    if(!cell) continue;
+    const bid = G.grid[i];
+    if(bid){
+      const b = BUILDINGS.find(x=>x.id===bid);
+      cell.className = 'grid-cell placed';
+      cell.innerHTML = `<div class="cell-glow"></div><span style="font-size:18px" title="${b.name}">${b.icon}</span>`;
+    } else {
+      cell.className = 'grid-cell empty-cell';
+      cell.innerHTML = '<div class="cell-glow"></div>';
+      if(G.placingBuilding){
+        cell.style.background = 'rgba(193,68,14,0.15)';
+      } else {
+        cell.style.background = '';
+      }
+    }
+  }
+}
+
+function renderVitals(){
+  const r = G.resources;
+  const o2Pct = Math.min(100, Math.max(0, r.oxygen));
+  const foodPct = Math.min(100, Math.max(0, r.food));
+
+  setBar('o2', o2Pct, r.oxygen > 50 ? '#4fc3f7' : r.oxygen > 20 ? '#ffd700' : '#ff3333');
+  setBar('food', foodPct, r.food > 50 ? '#39ff88' : r.food > 20 ? '#ffd700' : '#ff3333');
+  setBar('morale', G.morale, G.morale > 50 ? '#ffd700' : G.morale > 25 ? '#ff8c00' : '#ff3333');
+  setBar('health', G.health, G.health > 60 ? '#ff6b6b' : G.health > 30 ? '#ff8c00' : '#ff3333');
+
+  // Status badge
+  const badge = document.getElementById('colony-status');
+  if(r.oxygen < 20 || r.food < 20 || G.health < 30){
+    badge.className = 'status-badge danger';
+    badge.textContent = 'CRITICAL';
+  } else if(r.oxygen < 50 || r.food < 50 || G.morale < 40){
+    badge.className = 'status-badge warn';
+    badge.textContent = 'WARNING';
+  } else {
+    badge.className = 'status-badge ok';
+    badge.textContent = 'STABLE';
+  }
+}
+
+function setBar(id, pct, color){
+  const bar = document.getElementById('vb-'+id+'-bar');
+  const val = document.getElementById('vb-'+id+'-val');
+  if(bar) bar.style.width = pct + '%';
+  if(val){ val.textContent = Math.floor(pct) + '%'; val.style.color = color; }
+}
+
+function renderStats(){
+  const r = G.resources;
+  const rates = calcRates();
+  document.getElementById('stat-pop').textContent = r.pop;
+  document.getElementById('stat-buildings').textContent = G.totalBuildings;
+  document.getElementById('stat-sol').textContent = G.sol;
+  const o2r = rates.oxygen - r.pop * 0.5;
+  document.getElementById('stat-o2rate').textContent = (o2r>=0?'+':'')+o2r.toFixed(1);
+  document.getElementById('stat-o2rate').className = 'sr-val ' + (o2r>=0?'pos':'neg');
+  const fr = rates.food - r.pop * 0.3;
+  document.getElementById('stat-foodrate').textContent = (fr>=0?'+':'')+fr.toFixed(1);
+  document.getElementById('stat-foodrate').className = 'sr-val ' + (fr>=0?'pos':'neg');
+  document.getElementById('stat-power').textContent = rates.power + '/' + rates.powerUsed;
+  document.getElementById('stat-score').textContent = G.score;
+}
+
+function renderAchievements(){
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val ? '✅' : '⬜'; };
+  const r = G.resources;
+  set('ach-pop10', G.peakPop >= 10);
+  set('ach-pop25', G.peakPop >= 25);
+  set('ach-pop50', G.peakPop >= 50);
+  set('ach-pop100', G.peakPop >= 100);
+  set('ach-sol50', G.sol >= 50);
+  set('ach-sol100', G.sol >= 100);
+  set('ach-build10', G.totalBuildings >= 10);
+  set('ach-storm', G.survidedStorm);
+}
+
+function selectBuilding(id){
+  const b = BUILDINGS.find(x=>x.id===id);
+  if(!b) return;
+  if(b.requiresResearch && !G.researched.includes(b.requiresResearch)){
+    showToast('Research required: ' + b.requiresResearch, 'warn');
+    return;
+  }
+  if(G.resources.iron < b.cost.iron || G.resources.crystal < (b.cost.crystal||0)){
+    showToast('Not enough resources!', 'bad');
+    return;
+  }
+  if(G.placingBuilding === id){
+    G.placingBuilding = null;
+  } else {
+    G.placingBuilding = id;
+    showToast('Click an empty cell to place ' + b.name, 'info');
+  }
+  renderBuildCards();
+  renderGrid();
+}
+
+function placeBuilding(cellIdx){
+  if(!G.placingBuilding) return;
+  if(G.grid[cellIdx]) { showToast('Cell already occupied!','warn'); return; }
+
+  const b = BUILDINGS.find(x=>x.id===G.placingBuilding);
+  if(!b) return;
+
+  // Deduct cost
+  G.resources.iron -= b.cost.iron;
+  G.resources.crystal -= (b.cost.crystal||0);
+
+  G.grid[cellIdx] = b.id;
+  G.buildings.push({id:b.id, cellIdx});
+  G.totalBuildings++;
+
+  // Update housing cap
+  if(b.housingCapacity) G.housingCap += b.housingCapacity;
+
+  G.placingBuilding = null;
+  logEvent(`Constructed: ${b.icon} ${b.name}`, 'good');
+  showToast(b.name + ' built!', 'good');
+
+  renderAll();
+}
+
+function calcRates(){
+  let oxygen=0, food=0, power=0, powerUsed=0, iron=0, crystal=0, science=0, morale=0, health=0;
+  const efficiency = G.researched.includes('efficiency') ? 0.8 : 1;
+
+  G.buildings.forEach(({id})=>{
+    const b = BUILDINGS.find(x=>x.id===id);
+    if(!b) return;
+    let mult = 1;
+    if(id==='greenhouse' && G.researched.includes('hydroponics')) mult = 1.5;
+    if(id==='med_bay' && G.researched.includes('medicine')) mult = 2;
+
+    if(b.produces.oxygen) oxygen += b.produces.oxygen * mult;
+    if(b.produces.food) food += b.produces.food * mult;
+    if(b.produces.power) power += b.produces.power;
+    if(b.produces.iron) iron += b.produces.iron;
+    if(b.produces.crystal) crystal += b.produces.crystal;
+    if(b.produces.science) science += b.produces.science;
+    if(b.produces.morale) morale += b.produces.morale;
+    if(b.produces.health) health += b.produces.health;
+
+    if(b.powerNeeded) powerUsed += Math.ceil(b.powerNeeded * efficiency);
+  });
+
+  return {oxygen, food, power, powerUsed, iron, crystal, science, morale, health};
+}
+
+function advanceSol(){
+  G.sol++;
+  const r = G.resources;
+  const rates = calcRates();
+  const efficiency = G.researched.includes('efficiency') ? 0.8 : 1;
+
+  // Power check
+  const netPower = rates.power - rates.powerUsed;
+  const powerOk = netPower >= 0;
+
+  if(!powerOk){
+    // Low power: reduce production
+    const factor = rates.power / Math.max(1, rates.powerUsed);
+    rates.oxygen *= factor;
+    rates.food *= factor;
+    rates.iron *= factor;
+    rates.crystal *= factor;
+    if(G.sol % 5 === 0) logEvent('⚡ Power shortage! Production reduced.', 'bad');
+  }
+
+  // Apply production
+  r.oxygen += rates.oxygen;
+  r.food += rates.food;
+  r.iron += rates.iron;
+  r.crystal += rates.crystal;
+  r.science += rates.science;
+
+  // Consumption
+  r.oxygen -= r.pop * 0.5;
+  r.food   -= r.pop * 0.3;
+
+  // Caps
+  r.oxygen = Math.min(200, r.oxygen);
+  r.food   = Math.min(300, r.food);
+  r.iron   = Math.min(500, r.iron);
+  r.crystal= Math.min(200, r.crystal);
+
+  // Morale & health
+  G.morale = Math.max(0, Math.min(100, G.morale + (rates.morale - 2) * 0.1));
+  G.health = Math.max(0, Math.min(100, G.health + (rates.health - 1) * 0.1));
+
+  // Low resources hurt morale/health
+  if(r.oxygen < 30) G.morale -= 3;
+  if(r.food < 30)   G.morale -= 2;
+  if(G.morale < 30) G.health -= 1;
+
+  // Population growth
+  if(r.pop < G.housingCap && r.food > 50 && r.oxygen > 50 && G.morale > 50 && G.sol % 8 === 0){
+    r.pop++;
+    G.peakPop = Math.max(G.peakPop, r.pop);
+    logEvent(`👤 New colonist arrived! Population: ${r.pop}`, 'good');
+  }
+
+  // Population death
+  if(r.oxygen <= 0 && G.sol % 3 === 0){
+    r.pop = Math.max(0, r.pop - 1);
+    logEvent('💀 Colonist died: Oxygen deprivation.', 'bad');
+  }
+  if(r.food <= 0 && G.sol % 4 === 0){
+    r.pop = Math.max(0, r.pop - 1);
+    logEvent('💀 Colonist died: Starvation.', 'bad');
+  }
+
+  // Random events
+  randomEvent();
+
+  // Score
+  G.score = Math.floor(G.sol * 5 + G.peakPop * 20 + G.totalBuildings * 15 + r.science);
+
+  // Win condition
+  if(r.pop >= 100){
+    setTimeout(()=>showWin(), 300);
+    return;
+  }
+
+  // Loss condition
+  if(r.pop <= 0){
+    setTimeout(()=>showGameOver('All colonists have perished.'), 300);
+    return;
+  }
+
+  // Achievements
+  checkAchievements();
+  renderAll();
+}
+
+function randomEvent(){
+  if(Math.random() > 0.12) return;
+
+  const events = [
+    {
+      w:3, fn:()=>{
+        const dmg = G.researched.includes('insulation') ? 5 : 15;
+        G.resources.oxygen -= dmg;
+        G.morale -= 10;
+        G.survidedStorm = true;
+        logEvent(`🌪️ Dust storm! Lost ${dmg} O₂. Colony damaged.`, 'bad');
+        if(G.researched.includes('insulation')) showToast('Insulation absorbed most of the storm!','warn');
+        else showToast('Dust storm strikes the colony!','bad');
+      }
+    },
+    {
+      w:2, fn:()=>{
+        const bonus = Math.floor(Math.random()*20)+10;
+        G.resources.iron += bonus;
+        logEvent(`⛏️ Lucky strike! Found ${bonus} iron deposits.`, 'good');
+        showToast('+'+bonus+' iron found!','good');
+      }
+    },
+    {
+      w:2, fn:()=>{
+        const bonus = Math.floor(Math.random()*8)+3;
+        G.resources.crystal += bonus;
+        logEvent(`💎 Rare crystals discovered! +${bonus} crystal.`, 'good');
+        showToast('+'+bonus+' crystal found!','good');
+      }
+    },
+    {
+      w:1, fn:()=>{
+        G.resources.pop = Math.max(1, G.resources.pop - 1);
+        logEvent('☢️ Radiation spike! A colonist fell ill.', 'bad');
+        G.health -= 5;
+      }
+    },
+    {
+      w:2, fn:()=>{
+        G.morale = Math.min(100, G.morale + 15);
+        logEvent('🎉 Morale event: Earth broadcast received! Colonists inspired.', 'good');
+        showToast('Morale boosted!','good');
+      }
+    },
+    {
+      w:1, fn:()=>{
+        if(G.resources.food > 20){
+          G.resources.food -= 20;
+          logEvent('🐛 Crop blight! Lost 20 food units.', 'bad');
+          showToast('Crop blight!','bad');
+        }
+      }
+    },
+    {
+      w:1, fn:()=>{
+        const bonus = Math.floor(Math.random()*15)+5;
+        G.resources.science += bonus;
+        logEvent(`🔬 Breakthrough! Scientists made progress. +${bonus} science.`, 'good');
+        showToast('+'+bonus+' science!','good');
+      }
+    },
+  ];
+
+  const total = events.reduce((s,e)=>s+e.w, 0);
+  let rand = Math.random()*total;
+  for(const e of events){
+    rand -= e.w;
+    if(rand <= 0){ e.fn(); break; }
+  }
+}
+
+
+function doResearch(id){
+  if(G.researched.includes(id)){
+    showToast('Already researched!','warn');
+    return;
+  }
+  const r = RESEARCH_TREE.find(x=>x.id===id);
+  if(!r) return;
+  if(G.resources.science < r.cost){
+    showToast(`Need ${r.cost} science (have ${Math.floor(G.resources.science)})`, 'bad');
+    return;
+  }
+  G.resources.science -= r.cost;
+  G.researched.push(id);
+  document.getElementById('ri-check-'+id).textContent = '✅';
+  document.getElementById('res-'+id).classList.add('researched');
+  logEvent(`🔬 Researched: ${r.name}`, 'info');
+  showToast(r.name + ' unlocked!', 'good');
+  renderAll();
+}
+
+let autoTimer = null;
+const speedMs = {1:2000, 2:800, 3:300};
+
+function setSpeed(s){
+  clearInterval(autoTimer);
+  G.speed = s;
+
+  ['pause','1x','2x','3x'].forEach((id,i)=>{
+    const btn = document.getElementById('btn-'+id);
+    if(btn) btn.classList.remove('active','paused');
+  });
+
+  if(s === 0){
+    document.getElementById('btn-pause').classList.add('active','paused');
+  } else {
+    const ids = ['1x','2x','3x'];
+    document.getElementById('btn-'+ids[s-1]).classList.add('active');
+    autoTimer = setInterval(advanceSol, speedMs[s]);
+  }
+}
+
+function checkAchievements(){
+  const r = G.resources;
+  const achieve = (id, label)=>{
+    if(!G.achievements[id]){
+      G.achievements[id] = true;
+      showToast('🏆 Achievement: '+label, 'good');
+    }
+  };
+  if(G.peakPop >= 10) achieve('pop10','Population 10');
+  if(G.peakPop >= 25) achieve('pop25','Population 25');
+  if(G.peakPop >= 50) achieve('pop50','Population 50');
+  if(G.sol >= 50) achieve('sol50','50 Sols Survived');
+  if(G.sol >= 100) achieve('sol100','100 Sols Survived');
+  if(G.totalBuildings >= 10) achieve('build10','10 Buildings');
+  renderAchievements();
+}
+
+function showGameOver(reason){
+  clearInterval(autoTimer);
+  document.getElementById('gameover-reason').textContent = reason || 'Your colony has perished on the red planet.';
+  document.getElementById('go-sols').textContent = G.sol;
+  document.getElementById('go-pop').textContent = G.peakPop;
+  document.getElementById('go-buildings').textContent = G.totalBuildings;
+  document.getElementById('go-score').textContent = G.score;
+  showScreen('gameover');
+}
+
+function showWin(){
+  clearInterval(autoTimer);
+  document.getElementById('win-sols').textContent = G.sol;
+  document.getElementById('win-pop').textContent = G.resources.pop;
+  document.getElementById('win-score').textContent = G.score;
+  showScreen('win');
+}
+
+function showModal(title, body, onOk){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('modal-ok').onclick = ()=>{ if(onOk) onOk(); closeModal(); };
+}
+
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+function logEvent(msg, type='info'){
+  const list = document.getElementById('event-list');
+  if(!list) return;
+  const div = document.createElement('div');
+  div.className = 'event-item ' + type;
+  div.innerHTML = `<span class="ev-day">SOL ${G.sol}</span><span>${msg}</span>`;
+  list.insertBefore(div, list.firstChild);
+  if(list.children.length > 30) list.removeChild(list.lastChild);
+}
+
+
+function showToast(msg, type='info'){
+  const cont = document.getElementById('toast-container');
+  const div = document.createElement('div');
+  div.className = 'toast '+type;
+  div.textContent = msg;
+  cont.appendChild(div);
+  setTimeout(()=>{ div.style.opacity='0'; div.style.transition='opacity 0.4s'; setTimeout(()=>div.remove(),400); }, 2500);
+}
+
+
+showScreen('intro');
+</script>
+</body>
+</html>
