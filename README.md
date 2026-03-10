@@ -6,7 +6,7 @@ A browser-based Mars colony survival simulator built for the Hack Club Challenge
 
 ## What is this?
 
-You're a colony commander on Mars. Your job is to keep your colonists alive and grow the population from 4 to 100 before everything falls apart. You manage oxygen, food, power, iron, and crystal — while dealing with dust storms, crop blights, radiation spikes, and random events that keep things unpredictable.
+You're a colony commander on Mars. Your job is to keep your colonists alive and grow the population from 4 to 100 before everything falls apart. You manage oxygen, food, power, iron, and crystal  while dealing with dust storms, crop blights, radiation spikes, and random events that keep things unpredictable.
 
 It's a resource management + base-building game that runs entirely in the browser. No installs, no setup, just open the file and play.
 
