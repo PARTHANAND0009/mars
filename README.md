@@ -1,4 +1,4 @@
-# Mars Colony — PARTH ANAND
+# Mars Colony  PARTH ANAND
 
 A browser-based Mars colony survival simulator built for the Hack Club Challenger Space Mission (March 2026).
 
@@ -18,7 +18,7 @@ It's a resource management + base-building game that runs entirely in the browse
 2. Hit **Launch Mission**
 3. Select a building from the left panel, then click an empty cell on the colony grid to place it
 4. Use **Next Sol** to advance time, or set a speed (1x / 2x / 3x) for auto-simulation
-5. Manage your resources — if oxygen or food hits zero, colonists start dying
+5. Manage your resources  if oxygen or food hits zero, colonists start dying
 6. Research new technologies to unlock advanced buildings
 7. Reach 100 colonists to win
 
@@ -38,14 +38,14 @@ It's a resource management + base-building game that runs entirely in the browse
 | Med Bay | Improves colonist health |
 | Water Extractor | Melts ice for O₂ and food bonus |
 | Comms Array | Boosts morale and science |
-| Nuclear Reactor | Requires research — high power output |
-| Great Dome | Requires research — large housing + morale |
+| Nuclear Reactor | Requires research  high power output |
+| Great Dome | Requires research  large housing + morale |
 
 ---
 
 ## Why is it one single HTML file?
 
-I kept everything (HTML, CSS, JavaScript) in one file on purpose. The main reason is portability — anyone can download it, double-click it, and it just works. No npm, no build tools, no server, no dependencies to install. For a Hack Club project where the goal is to ship something and show it off, a single file is the cleanest way to do that. You can share it on GitHub, email it, put it on a USB drive, anything. It also made development faster since I didn't have to set up a project structure just to build a game.
+I kept everything (HTML, CSS, JavaScript) in one file on purpose. The main reason is portability  anyone can download it, double-click it, and it just works. No npm, no build tools, no server, no dependencies to install. For a Hack Club project where the goal is to ship something and show it off, a single file is the cleanest way to do that. You can share it on GitHub, email it, put it on a USB drive, anything. It also made development faster since I didn't have to set up a project structure just to build a game.
 
 ---
 
@@ -62,7 +62,7 @@ No frameworks. No libraries. Just browser APIs.
 
 ## AI usage
 
-I used Claude as a debugging tool while building this — mostly to catch logic errors in the resource calculations and fix layout issues I was running into. The game concept, mechanics, and design decisions are my own. Claude helped me spot bugs faster than I would have on my own, which I think is a fair and honest way to use it.
+I used Claude as a debugging tool while building this  mostly to catch logic errors in the resource calculations and fix layout issues I was running into. The game concept, mechanics, and design decisions are my own. Claude helped me spot bugs faster than I would have on my own, which I think is a fair and honest way to use it.
 
 ---
 
