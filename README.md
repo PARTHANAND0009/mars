@@ -66,10 +66,4 @@ I used Claude as a debugging tool while building this  mostly to catch logic err
 
 ---
 
-## Submitted to
-
-Hack Club Challenger Space Mission
-
----
-
 Built by Parth / Prime Studios
